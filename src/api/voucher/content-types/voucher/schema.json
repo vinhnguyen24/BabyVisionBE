@@ -1,0 +1,72 @@
+{
+  "kind": "collectionType",
+  "collectionName": "vouchers",
+  "info": {
+    "singularName": "voucher",
+    "pluralName": "vouchers",
+    "displayName": "Voucher",
+    "description": "Voucher codes for Premium subscription activation via RevenueCat"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "code": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 50
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["free_trial", "discount"],
+      "required": true,
+      "default": "free_trial"
+    },
+    "duration_months": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "min": 1,
+      "max": 12
+    },
+    "is_used": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "assigned_to": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "vouchers"
+    },
+    "expiry_date": {
+      "type": "datetime",
+      "required": true
+    },
+    "redeemed_at": {
+      "type": "datetime"
+    },
+    "discount_percentage": {
+      "type": "integer",
+      "min": 0,
+      "max": 100
+    },
+    "description": {
+      "type": "text",
+      "maxLength": 500
+    },
+    "max_uses": {
+      "type": "integer",
+      "default": 1,
+      "min": 1
+    },
+    "current_uses": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    }
+  }
+}
