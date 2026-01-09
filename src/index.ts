@@ -25,12 +25,16 @@ export default {
       const fs = require('fs');
       const path = require('path');
       // Use process.cwd() to ensure it works from the project root
-      const templatePath = path.join(process.cwd(), 'src', 'extensions', 'email', 'templates', 'registration-confirmation.html');
+      const confirmationTemplatePath = path.join(process.cwd(), 'src', 'extensions', 'email', 'templates', 'registration-confirmation.html');
+      const resetPasswordTemplatePath = path.join(process.cwd(), 'src', 'extensions', 'email', 'templates', 'reset-password.html');
       
       let premiumHtml = '';
-      if (fs.existsSync(templatePath)) {
-        strapi.log.info(`Reading premium template from: ${templatePath}`);
-        premiumHtml = fs.readFileSync(templatePath, 'utf-8');
+      let resetPasswordHtml = '';
+
+      // Load confirmation email template
+      if (fs.existsSync(confirmationTemplatePath)) {
+        strapi.log.info(`Reading premium template from: ${confirmationTemplatePath}`);
+        premiumHtml = fs.readFileSync(confirmationTemplatePath, 'utf-8');
         
         // Convert placeholders to Strapi format
         premiumHtml = premiumHtml
@@ -42,7 +46,20 @@ export default {
           .replace(/{{playStoreLink}}/g, 'https://play.google.com/store/apps/details?id=com.babyvision')
           .replace(/{{unsubscribeLink}}/g, '#');
       } else {
-        strapi.log.warn(`Premium template file not found at: ${templatePath}`);
+        strapi.log.warn(`Premium template file not found at: ${confirmationTemplatePath}`);
+      }
+
+      // Load reset password email template
+      if (fs.existsSync(resetPasswordTemplatePath)) {
+        strapi.log.info(`Reading reset password template from: ${resetPasswordTemplatePath}`);
+        resetPasswordHtml = fs.readFileSync(resetPasswordTemplatePath, 'utf-8');
+        
+        // Convert placeholders to Strapi format
+        resetPasswordHtml = resetPasswordHtml
+          .replace(/{{resetLink}}/g, '<%= URL %>?code=<%= TOKEN %>')
+          .replace(/{{year}}/g, new Date().getFullYear().toString());
+      } else {
+        strapi.log.warn(`Reset password template file not found at: ${resetPasswordTemplatePath}`);
       }
 
       let changed = false;
@@ -71,6 +88,14 @@ export default {
           settings.reset_password.options.from = defaultFrom;
           settings.reset_password.options.response_email = defaultReplyTo;
           changed = true;
+        }
+
+        // Update reset password template to match premium style
+        if (resetPasswordHtml && (settings.reset_password.options.message !== resetPasswordHtml)) {
+          settings.reset_password.options.message = resetPasswordHtml;
+          settings.reset_password.options.object = 'Reset Your Password — BabyVision';
+          changed = true;
+          strapi.log.info('Updated reset password template to premium version.');
         }
       }
 

@@ -92,7 +92,9 @@
     "avatar": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "display_name": {
       "type": "string",
