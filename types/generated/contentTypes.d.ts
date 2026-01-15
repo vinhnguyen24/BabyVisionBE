@@ -430,6 +430,112 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBabyActivityBabyActivity
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'baby_activities';
+  info: {
+    description: 'Activity entries (feeding, sleep, diaper, weight, solid food) for baby tracking';
+    displayName: 'Baby Activity';
+    pluralName: 'baby-activities';
+    singularName: 'baby-activity';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    baby_profile: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::baby-profile.baby-profile'
+    >;
+    client_updated_at: Schema.Attribute.DateTime;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    data: Schema.Attribute.JSON & Schema.Attribute.Required;
+    deleted_at: Schema.Attribute.DateTime;
+    local_id: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::baby-activity.baby-activity'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    synced_at: Schema.Attribute.DateTime;
+    timestamp: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    type: Schema.Attribute.Enumeration<
+      ['feeding', 'sleep', 'pee', 'poop', 'weight', 'solid']
+    > &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
+export interface ApiBabyProfileBabyProfile extends Struct.CollectionTypeSchema {
+  collectionName: 'baby_profiles';
+  info: {
+    description: 'Baby information linked to a user account for activity tracking and sync';
+    displayName: 'Baby Profile';
+    pluralName: 'baby-profiles';
+    singularName: 'baby-profile';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    activities: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::baby-activity.baby-activity'
+    >;
+    avatar_url: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    birthdate: Schema.Attribute.Date & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_premature: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::baby-profile.baby-profile'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    premature_weeks: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 20;
+          min: 0;
+        },
+        number
+      >;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
   collectionName: 'blog_posts';
   info: {
@@ -1113,7 +1219,15 @@ export interface PluginUsersPermissionsUser
   };
   attributes: {
     avatar: Schema.Attribute.Media<'images'>;
+    baby_activities: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::baby-activity.baby-activity'
+    >;
     baby_birthdate: Schema.Attribute.Date;
+    baby_profiles: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::baby-profile.baby-profile'
+    >;
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     blog_posts: Schema.Attribute.Relation<
       'oneToMany',
@@ -1186,6 +1300,8 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::baby-activity.baby-activity': ApiBabyActivityBabyActivity;
+      'api::baby-profile.baby-profile': ApiBabyProfileBabyProfile;
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
       'api::category.category': ApiCategoryCategory;
       'api::voucher.voucher': ApiVoucherVoucher;

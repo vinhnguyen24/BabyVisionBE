@@ -106,6 +106,18 @@
     "push_notification_token": {
       "type": "string",
       "maxLength": 500
+    },
+    "baby_profiles": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::baby-profile.baby-profile",
+      "mappedBy": "user"
+    },
+    "baby_activities": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::baby-activity.baby-activity",
+      "mappedBy": "user"
     }
   }
 }

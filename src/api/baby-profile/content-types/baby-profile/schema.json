@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "baby_profiles",
+  "info": {
+    "singularName": "baby-profile",
+    "pluralName": "baby-profiles",
+    "displayName": "Baby Profile",
+    "description": "Baby information linked to a user account for activity tracking and sync"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "birthdate": {
+      "type": "date",
+      "required": true
+    },
+    "avatar_url": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "is_premature": {
+      "type": "boolean",
+      "default": false
+    },
+    "premature_weeks": {
+      "type": "integer",
+      "min": 0,
+      "max": 20
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "baby_profiles"
+    },
+    "activities": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::baby-activity.baby-activity",
+      "mappedBy": "baby_profile"
+    }
+  }
+}

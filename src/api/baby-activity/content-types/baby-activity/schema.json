@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "baby_activities",
+  "info": {
+    "singularName": "baby-activity",
+    "pluralName": "baby-activities",
+    "displayName": "Baby Activity",
+    "description": "Activity entries (feeding, sleep, diaper, weight, solid food) for baby tracking"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "local_id": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["feeding", "sleep", "pee", "poop", "weight", "solid"],
+      "required": true
+    },
+    "timestamp": {
+      "type": "datetime",
+      "required": true
+    },
+    "data": {
+      "type": "json",
+      "required": true
+    },
+    "baby_profile": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::baby-profile.baby-profile",
+      "inversedBy": "activities"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "baby_activities"
+    },
+    "synced_at": {
+      "type": "datetime"
+    },
+    "deleted_at": {
+      "type": "datetime"
+    },
+    "client_updated_at": {
+      "type": "datetime"
+    }
+  }
+}
